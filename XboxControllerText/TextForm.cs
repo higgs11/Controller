@@ -19,10 +19,8 @@ namespace XboxControllerText
 
         public TextForm()
         {
-            InitializeComponent();
-            _alphabet.Reset();
-            this.UpdateText();            
-            //txtCurrentLetter.Text = _alphabet.GetCurrentLetter().ToString();
+            InitializeComponent();           
+            this.selectLetterOrdering((Alphabet.eLetterOrder)Settings1.Default.LetterOrderingSetting);                                    
         }
 
         /// <summary>
@@ -48,12 +46,12 @@ namespace XboxControllerText
                 switch (msg.WParam.ToInt32())
                 {
                     case (int)System.Windows.Forms.Keys.Escape:
-                        _alphabet.Reset();
+                        _alphabet.ResetSearchIndexes();
                         break;
 
                     case (int)System.Windows.Forms.Keys.Space:
                         rtfTextBox.AppendText(_alphabet.GetCurrentLetter().ToString());
-                        _alphabet.Reset();
+                        _alphabet.ResetSearchIndexes();
                         break;
 
                     default:
@@ -68,8 +66,7 @@ namespace XboxControllerText
             }
 
             this.UpdateText();
-            //txtCurrentLetter.Text = _alphabet.GetCurrentLetter().ToString();
-
+            
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
@@ -107,15 +104,65 @@ namespace XboxControllerText
 
         public void ResetLetters()
         {
-            _alphabet.Reset();
+            _alphabet.ResetSearchIndexes();
             this.UpdateText();
         }
 
         public void SelectLetter()
         {
             rtfTextBox.AppendText(_alphabet.GetCurrentLetter().ToString());
-            _alphabet.Reset();
+            _alphabet.ResetSearchIndexes();
             this.UpdateText();
+        }
+
+        private void morseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            selectLetterOrdering(Alphabet.eLetterOrder.MORSE_CODE);
+        }
+
+        private void alphabeticalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            selectLetterOrdering(Alphabet.eLetterOrder.ALPHABETICAL);
+        }
+
+        private void selectLetterOrdering(Alphabet.eLetterOrder letterOrder)
+        {
+            switch (letterOrder)
+            {
+                case Alphabet.eLetterOrder.ALPHABETICAL:
+                    alphabeticalToolStripMenuItem.Checked = true;
+                    morseToolStripMenuItem.Checked = false;
+                    break;
+
+                case Alphabet.eLetterOrder.MORSE_CODE:
+                    alphabeticalToolStripMenuItem.Checked = false;
+                    morseToolStripMenuItem.Checked = true;
+                    break;
+
+                default:
+                    MessageBox.Show("Non supported ordering. Defaulting to Alphabet.eLetterOrder.ALPHABETICAL");
+                    alphabeticalToolStripMenuItem.Checked = true;
+                    morseToolStripMenuItem.Checked = false;
+                    break;
+            }
+
+            _alphabet.SetLetterOrder(letterOrder);
+            Settings1.Default.LetterOrderingSetting = (int)letterOrder;
+            Settings1.Default.Save();
+            this.UpdateText();
+
+        }
+
+
+
+        public void EraseLastLetter()
+        {
+            if (rtfTextBox.Text.Length > 0)
+            {
+                rtfTextBox.Text = rtfTextBox.Text.Remove(rtfTextBox.Text.Length - 1);
+            }
+
+            rtfTextBox.ScrollToCaret();
         }
     }
 }

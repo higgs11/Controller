@@ -53,7 +53,7 @@ namespace XboxControllerText
             spriteBatch = new SpriteBatch(GraphicsDevice);
             GammaRamp gammaRamp = GraphicsDevice.GetGammaRamp();
             textForm = new TextForm();
-            textForm.TopMost = true;            
+            //textForm.TopLevel = true;            
             textForm.Show();
             
 
@@ -98,28 +98,33 @@ namespace XboxControllerText
                 // Increase vibration if the player is tapping the A button.
                 // Subtract vibration otherwise, even if the player holds down A
 
-                if (currentState.Buttons.A == ButtonState.Pressed &&
-                    previousGamePadState.Buttons.A == ButtonState.Released)
+                if (currentState.Buttons.LeftShoulder == ButtonState.Pressed &&
+                    previousGamePadState.Buttons.LeftShoulder == ButtonState.Released)
                 {
                     textForm.ControllerInputLeft();
                    
                 }
-                else if (currentState.Buttons.B == ButtonState.Pressed &&
-                    previousGamePadState.Buttons.B == ButtonState.Released)
+                else if (currentState.Buttons.RightShoulder == ButtonState.Pressed &&
+                    previousGamePadState.Buttons.RightShoulder == ButtonState.Released)
                 {
                     textForm.ControllerInputRight();
                     
                 }
 
-                else if (currentState.DPad.Down == ButtonState.Pressed &&
-                    previousGamePadState.DPad.Down == ButtonState.Released)
+                else if (currentState.Buttons.A == ButtonState.Pressed &&
+                    previousGamePadState.Buttons.A == ButtonState.Released)
                 {
                     textForm.SelectLetter();
                 }
-                else if (currentState.DPad.Up == ButtonState.Pressed &&
-                    previousGamePadState.DPad.Up == ButtonState.Released)
+                else if (currentState.Buttons.Y == ButtonState.Pressed &&
+                    previousGamePadState.Buttons.Y == ButtonState.Released)
                 {
                     textForm.ResetLetters();
+                }
+                else if (currentState.Buttons.B == ButtonState.Pressed &&
+                    previousGamePadState.Buttons.B == ButtonState.Released)
+                {
+                    textForm.EraseLastLetter();
                 }
 
                 // Update previous gamepad state.
@@ -127,17 +132,19 @@ namespace XboxControllerText
             }
         }
 
+
+       
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            
+                     
+
+            GraphicsDevice.Clear(Color.SteelBlue);            
 
             // TODO: Add your drawing code here
-
             base.Draw(gameTime);
         }
     }
